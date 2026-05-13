@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mint's Ultimate Fitness Journal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-grad: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --glass: rgba(255, 255, 255, 0.85);
+            --bg: #f3f4f6;
+            --text-main: #1e293b;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: radial-gradient(circle at top right, #e0e7ff, #f3f4f6);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- หน้าปก (Welcome Screen) --- */
+        #page-welcome {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e293b 0%, #4338ca 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
+        }
+
+        .welcome-content {
+            text-align: center;
+            color: white;
+            animation: fadeInScale 1s ease-out;
+        }
+
+        .logo-circle {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .welcome-content h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            letter-spacing: 6px;
+            margin: 0 0 10px 0;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .welcome-content p {
+            font-weight: 300;
+            letter-spacing: 2px;
+            opacity: 0.8;
+            margin-bottom: 45px;
+        }
+
+        .btn-start {
+            background: white;
+            color: #4338ca;
+            border: none;
+            padding: 20px 45px;
+            border-radius: 50px;
+            font-family: 'Prompt';
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-start:hover {
+            transform: scale(1.05);
+            background: #f8fafc;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.03);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            padding: 10px 25px;
+            font-family: 'Prompt';
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: 0.3s all cubic-bezier(0.4, 0, 0.2, 1);
+            color: #64748b;
+        }
+
+        nav button.active {
+            background: var(--primary-grad);
+            color: white;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* --- Content Layout --- */
+        .page {
+            display: none;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            opacity: 0;
+        }
+
+        .active-page { 
+            display: block; 
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hero { text-align: center; margin-bottom: 40px; }
+        .hero h1 { 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 3rem; 
+            margin: 0; 
+            background: var(--primary-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .quote { color: #64748b; font-style: italic; margin-top: 10px; }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 35px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);
+        }
+
+        /* --- Plan Image Styling --- */
+        .plan-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .plan-img-large {
+            width: 100%;
+            max-width: 700px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border: 5px solid white;
+        }
+
+        /* --- Table Styling --- */
+        .table-wrapper {
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: #f8fafc; padding: 20px; text-align: left; color: #64748b; font-size: 0.85rem; text-transform: uppercase; }
+        td { padding: 20px; border-bottom: 1px solid #f1f5f9; }
+        
+        .row-img { 
+            width: 100px; height: 100px; border-radius: 18px; object-fit: cover; 
+            cursor: pointer; transition: 0.3s;
+        }
+        .row-img:hover { transform: scale(1.1); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        .date-cell { font-weight: 700; color: #6366f1; white-space: nowrap; }
+        .data-text { font-size: 0.95rem; line-height: 1.6; color: #334155; }
+
+        .btn-delete {
+            background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px;
+            border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.3s;
+        }
+        .btn-delete:hover { background: #ef4444; color: white; }
+
+        .hide-welcome { transform: translateY(-100%); }
+        .app-ready nav, .app-ready .page { opacity: 1; }
+
+        #preview-img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 20px; display: none; margin-top: 15px; }
+
+        .form-grid { display: grid; gap: 25px; }
+        .input-group label { display: block; font-weight: 700; margin-bottom: 10px; color: #475569; font-size: 0.9rem; letter-spacing: 1px; }
+        
+        textarea {
+            width: 100%;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 18px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: none;
+            transition: 0.3s;
+            background: rgba(255,255,255,0.5);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #818cf8;
+            box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.1);
+            background: white;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="page-welcome">
+        <div class="welcome-content">
+            <div class="logo-circle">
+                <img src="profile.jpg" alt="Mint Profile" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <h1>"YOU love my job"</h1>
+            <p>ยินดีต้อนรับเข้าสู่ เว็ปที่ออกมาให้คุณโดยเฉพาะ</p>
+            <button class="btn-start" onclick="enterApp()">เข้าสู่ตารางนรกที่แท้จริง →</button>
+        </div>
+    </div>
+
+    <nav id="main-nav">
+        <button id="btn-add" class="active" onclick="showPage('add')">🔥 บันทึกการฝึก</button>
+        <button id="btn-fan" onclick="showPage('fan')">🗓️ ตารางออกกำลังคุณแฟน</button> 
+        <button id="btn-eat" onclick="showPage('eat')">🍽️ ตารางการกิน</button> 
+        <button id="btn-list" onclick="showPage('list')">📊 ตารางประวัติ</button>
+    </nav>
+
+    <div id="page-add" class="page active-page">
+        <div class="hero">
+            <h1>exercise</h1>
+            <p id="quote-display" class="quote">"ความสำเร็จเริ่มต้นที่การลงมือทำนะคั๊บ"</p>
+        </div>
+
+        <div class="glass-card">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>🏋️ วันนี้ออกกำลังกายท่าไหนไปบ้าง อู๊รึป่าว</label>
+                    <textarea id="workout-input" rows="4" placeholder="วันนี้เล่นท่าไหน น้ำหนักกี่กิโล..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>🥗 หนูกินอะไรไปกันน้า วันนี้</label>
+                    <textarea id="food-input" rows="2" placeholder="จดเมนูอาหารสุขภาพวันนี้..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>📷 PROGRESS PHOTO</label>
+                    <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                        <span id="upload-text">คลิกเพื่ออัปโหลดรูปภาพ Progress</span>
+                        <input type="file" id="file-input" hidden accept="image/*" onchange="handleFile(this)">
+                        <img id="preview-img">
+                    </div>
+                </div>
+
+                <button class="btn-main" onclick="saveData()" style="background: var(--primary-grad); color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);">
+                    💾 บันทึกลงไดอารี่
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-fan" class="page">
+        <div class="hero">
+            <h1>FAN'S PLAN</h1>
+            <p class="quote">"ตั้งใจทำให้คุมแฟนโดยเฉพาะเลยนะคั๊บ"</p>
+        </div>
+        <div class="glass-card plan-container">
+            <img src="1.png" alt="Workout Plan" class="plan-img-large" onerror="this.src='https://via.placeholder.com/700x900?text=Wait+for+1.png+file'">
+            <img src="2.png" alt="Workout Plan" class="plan-img-large" onerror="this.src='https://via.placeholder.com/700x900?text=Wait+for+1.png+file'">
+            <img src="3.png" alt="Workout Plan" class="plan-img-large" onerror="this.src='https://via.placeholder.com/700x900?text=Wait+for+1.png+file'">
+            <img src="4.png" alt="Workout Plan" class="plan-img-large" onerror="this.src='https://via.placeholder.com/700x900?text=Wait+for+1.png+file'">
+            <img src="5.png" alt="Workout Plan" class="plan-img-large" onerror="this.src='https://via.placeholder.com/700x900?text=Wait+for+1.png+file'">
+            <img src="6.png" alt="Workout Plan" class="plan-img-large" onerror="this.src='https://via.placeholder.com/700x900?text=Wait+for+1.png+file'">
+            <img src="7.png" alt="Workout Plan" class="plan-img-large" onerror="this.src='https://via.placeholder.com/700x900?text=Wait+for+1.png+file'">
+            <p style="color: #64748b; margin-top: 10px;">อย่าลืมทำตามตารางนะคั๊บคนเก่ง 💪</p>
+        </div>
+    </div>
+
+    <div id="page-eat" class="page">
+        <div class="hero">
+            <h1>EATING PLAN</h1>
+            <p class="quote">"กองทัพต้องเดินด้วยท้อง กินดีหุ่นเปลี่ยนไวแน่นอนไอจ้วน"</p>
+        </div>
+        <div class="glass-card plan-container">
+            <img src="11.png" alt="Eating Plan" class="plan-img-large" onerror="this.src='https://via.placeholder.com/700x900?text=Wait+for+11.png+file'">
+            <p style="color: #64748b; margin-top: 10px;">เป้าหมาย 50 กก. สู้ๆ นะคะคุณแฟน 🥗✨</p>
+        </div>
+    </div>
+
+    <div id="page-list" class="page">
+        <div class="hero">
+            <h1>HISTORY LOG</h1>
+            <p class="quote">ย้อนดูความพยายามที่คุณทำมาทั้งหมด</p>
+        </div>
+
+        <div class="table-wrapper">
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>รูปภาพ</th>
+                            <th>วันที่</th>
+                            <th>รายละเอียดการฝึก</th>
+                            <th>อาหาร</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let tempImageBase64 = "";
+        const quotes = [
+            "อย่าหยุดเมื่อเหนื่อย แต่จงหยุดเมื่อเสร็จสิ้น",
+            "การลงทุนที่คุ้มค่าที่สุด คือการลงทุนกับตัวเอง",
+            "ไม่มีใครสร้างหุ่นในฝันได้ภายในวันเดียว",
+            "ร่างกายของคุณทำได้ทุกอย่าง แค่ต้องสั่งใจให้ทำ",
+            "วินัย คือสิ่งที่คอยดึงคุณไว้ในวันที่แรงบันลดาใจหายไป"
+        ];
+
+        document.getElementById('quote-display').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+
+        function enterApp() {
+            document.getElementById('page-welcome').classList.add('hide-welcome');
+            document.body.classList.add('app-ready');
+            document.getElementById('main-nav').style.opacity = "1";
+            setTimeout(() => {
+                document.getElementById('page-welcome').style.display = 'none';
+            }, 800);
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active-page');
+                p.style.display = 'none';
+            });
+            const activePage = document.getElementById('page-' + pageId);
+            activePage.style.display = 'block';
+            setTimeout(() => activePage.classList.add('active-page'), 10);
+            
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + pageId).classList.add('active');
+
+            if(pageId === 'list') renderHistory();
+        }
+
+        function handleFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('preview-img').src = e.target.result;
+                document.getElementById('preview-img').style.display = "block";
+                document.getElementById('upload-text').style.display = "none";
+                tempImageBase64 = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveData() {
+            const workout = document.getElementById('workout-input').value;
+            const food = document.getElementById('food-input').value;
+
+            if(!workout && !food && !tempImageBase64) return alert("จดบันทึกก่อนนะคั๊บคุมแฟน Mint!");
+
+            const entry = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: '2-digit' }),
+                workout: workout || "-",
+                food: food || "-",
+                image: tempImageBase64
+            };
+
+            let logs = JSON.parse(localStorage.getItem('mintLogsV4')) || [];
+            logs.unshift(entry);
+            localStorage.setItem('mintLogsV4', JSON.stringify(logs));
+
+            alert("บันทึกความสำเร็จวันนี้ของคุมแฟนแล้วเก่งมาก! 💪");
+            document.getElementById('workout-input').value = "";
+            document.getElementById('food-input').value = "";
+            document.getElementById('preview-img').style.display = "none";
+            document.getElementById('upload-text').style.display = "block";
+            tempImageBase64 = "";
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-body');
+            const logs = JSON.parse(localStorage.getItem('mintLogsV4')) || [];
+
+            if (logs.length === 0) {
+                container.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 100px; color: #94a3b8;">ยังไม่มีประวัติ เริ่มบันทึกวันแรกกันเถอะ!</td></tr>';
+                return;
+            }
+
+            container.innerHTML = logs.map(item => `
+                <tr>
+                    <td>
+                        ${item.image ? `<img src="${item.image}" class="row-img" onclick="window.open(this.src)">` : '<div style="background:#f1f5f9; width:100px; height:100px; border-radius:18px; display:flex; align-items:center; justify-content:center; color:#cbd5e1; font-size:0.7rem;">NO PHOTO</div>'}
+                    </td>
+                    <td class="date-cell">${item.date}</td>
+                    <td class="data-text" style="white-space:pre-line;">${item.workout}</td>
+                    <td class="data-text" style="white-space:pre-line;">${item.food}</td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteItem(${item.id})">ลบ</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteItem(id) {
+            if(confirm("ลบประวัติของวันนี้ใช่ไหมคะ?")) {
+                let logs = JSON.parse(localStorage.getItem('mintLogsV4')) || [];
+                logs = logs.filter(item => item.id !== id);
+                localStorage.setItem('mintLogsV4', JSON.stringify(logs));
+                renderHistory();
+            }
+        }
+
+        renderHistory();
+    </script>
+</body>
+</html>
